@@ -30,29 +30,30 @@ family = "JetBrainsMono Nerd Font"
 style = "Bold Italic"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Bảng màu amber CRT — 16 màu ANSI ánh xạ về dải ấm nhưng vẫn phân biệt được.
-# Khớp với ~/.tmux.conf và wezterm.lua
+# Bảng màu amber CRT trên nền nâu xám — 16 màu ANSI ánh xạ về dải ấm
+# nhưng vẫn phân biệt được. Khớp với ~/.tmux.conf, ~/.wezterm.lua
+# và nvim colors/amber-crt.lua
 # ─────────────────────────────────────────────────────────────────────────────
 [colors.primary]
-background = "#2b2433"
+background = "#352b2d"
 foreground = "#e8c89a"
 dim_foreground = "#8a7a6a"
 bright_foreground = "#ffe0b0"
 
 [colors.cursor]
-text = "#2b2433"
+text = "#352b2d"
 cursor = "#ffb000"
 
 [colors.vi_mode_cursor]
-text = "#2b2433"
+text = "#352b2d"
 cursor = "#cc8800"
 
 [colors.selection]
-text = "#2b2433"
+text = "#352b2d"
 background = "#cc8800"
 
 [colors.normal]
-black = "#3a3145"
+black = "#46393c"
 red = "#c05a10"
 green = "#a08a3c"
 yellow = "#cc8800"
@@ -62,7 +63,7 @@ cyan = "#9c8a6a"
 white = "#e8c89a"
 
 [colors.bright]
-black = "#5a4f66"
+black = "#665356"
 red = "#e07b4a"
 green = "#c4a85a"
 yellow = "#ffb000"
@@ -72,7 +73,7 @@ cyan = "#c4b090"
 white = "#ffe0b0"
 
 [colors.dim]
-black = "#332b3d"
+black = "#292223"
 red = "#8f4410"
 green = "#77682d"
 yellow = "#996600"

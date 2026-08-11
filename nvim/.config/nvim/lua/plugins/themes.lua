@@ -6,6 +6,7 @@ return {
 		config = function()
 			-- Set default theme
 			local themes = {
+				"amber-crt", -- hổ phách trên nền nâu xám, khớp tmux + terminal
 				"tokyonight", -- for recording
 				"accent", -- this guy is for my eyes
 				"catppuccin", -- for recording
