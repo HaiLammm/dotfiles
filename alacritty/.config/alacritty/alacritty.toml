@@ -2,22 +2,84 @@
 TERM = "xterm-256color"
 
 [window]
-padding.x = 10
-padding.y = 10
-
+padding = { x = 10, y = 10 }
 # decorations = "Buttonless"
 decorations = "None" #for linux also
-
-opacity = 0.85
-blur = true
-
+# nền đặc: hiệu ứng CRT cần nền không trong suốt
+opacity = 1.0
+blur = false
 option_as_alt = "Both"
 
 [font]
-normal.family = "Inconsolata Nerd Font"
+size = 12.0
 
-size = 21
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
 
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "Bold Italic"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Bảng màu amber CRT — 16 màu ANSI ánh xạ về dải ấm nhưng vẫn phân biệt được.
+# Khớp với ~/.tmux.conf và wezterm.lua
+# ─────────────────────────────────────────────────────────────────────────────
+[colors.primary]
+background = "#2b2433"
+foreground = "#e8c89a"
+dim_foreground = "#8a7a6a"
+bright_foreground = "#ffe0b0"
+
+[colors.cursor]
+text = "#2b2433"
+cursor = "#ffb000"
+
+[colors.vi_mode_cursor]
+text = "#2b2433"
+cursor = "#cc8800"
+
+[colors.selection]
+text = "#2b2433"
+background = "#cc8800"
+
+[colors.normal]
+black = "#3a3145"
+red = "#c05a10"
+green = "#a08a3c"
+yellow = "#cc8800"
+blue = "#8a6f9c"
+magenta = "#b06a7a"
+cyan = "#9c8a6a"
+white = "#e8c89a"
+
+[colors.bright]
+black = "#5a4f66"
+red = "#e07b4a"
+green = "#c4a85a"
+yellow = "#ffb000"
+blue = "#ab8dbf"
+magenta = "#d99a9a"
+cyan = "#c4b090"
+white = "#ffe0b0"
+
+[colors.dim]
+black = "#332b3d"
+red = "#8f4410"
+green = "#77682d"
+yellow = "#996600"
+blue = "#685475"
+magenta = "#84505c"
+cyan = "#75684f"
+white = "#ab9370"
 
 [keyboard]
 bindings = [

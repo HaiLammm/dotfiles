@@ -2,127 +2,143 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local io = require("io")
 local os = require("os")
-local brightness = 0.03
 
--- image setting
-local home = os.getenv("HOME")
-local background_folder = home .. "/bg"
+-- 1. Khai báo biến toàn cục để lưu trạng thái hiện tại
+local brightness = 0.5  -- Tăng mặc định để dễ nhìn hơn
+local background_folder = wezterm.home_dir .. "/bg"
+local current_bg = wezterm.home_dir .. "/.config/nvim/bg/bg.jpg"  -- Giữ nguyên, nhưng đảm bảo file tồn tại
+
+-- 2. Hàm lấy ảnh ngẫu nhiên (Cải thiện kiểm tra lỗi)
 local function pick_random_background(folder)
-    local handle = io.popen('ls "' .. folder .. '"')
+    -- Kiểm tra thư mục tồn tại trước
+    if not os.execute('test -d "' .. folder .. '"') then
+        wezterm.log_error("Thư mục không tồn tại: " .. folder)
+        return nil
+    end
+
+    -- Sử dụng lệnh 'find' để lọc file ảnh
+    local cmd = 'find "' .. folder .. '" -type f | grep -E "\\.(jpg|jpeg|png|webp)$"'
+    local handle = io.popen(cmd)
     if handle ~= nil then
         local files = handle:read("*a")
         handle:close()
-
         local images = {}
         for file in string.gmatch(files, "[^\n]+") do
             table.insert(images, file)
         end
-
         if #images > 0 then
-            return folder .. "/" .. images[math.random(#images)]
+            return images[math.random(#images)]
         else
-            return nil
+            wezterm.log_error("Không tìm thấy ảnh hợp lệ trong: " .. folder)
         end
     end
+    return nil
 end
 
-config.window_background_image_hsb = {
-    -- Darken the background image by reducing it
-    brightness = brightness,
-    hue = 1.0,
-    saturation = 0.8,
-}
+-- 3. Cấu hình mặc định — nền đặc một màu, không ảnh nền.
+-- Ảnh nền vẫn bật lại được bất cứ lúc nào bằng CTRL+SHIFT+B bên dưới.
+-- config.window_background_image = current_bg
+-- config.window_background_image_hsb = {
+--     brightness = brightness,
+--     hue = 1.0,
+--     saturation = 0.8,
+-- }
 
--- default background
-local bg_image = home .. "/.config/nvim/bg/bg.jpg"
-
-config.window_background_image = bg_image
--- end image setting
-
--- window setting
-config.window_background_opacity = 0.90
-config.macos_window_background_blur = 85
-config.window_padding = {
-    left = 0,
-    right = 0,
-    top = 0,
-    bottom = 0,
-}
-
-config.color_scheme = "Tokyo Night"
-config.font = wezterm.font("Inconsolata Nerd Font Mono", { weight = "Medium", stretch = "Expanded" })
-config.font_size = 22
-
-config.window_decorations = "RESIZE"
+-- Các thiết lập giao diện khác
+config.window_background_opacity = 1.0
+config.font = wezterm.font("Inconsolata Nerd Font")
+config.font_size = 25
 config.enable_tab_bar = false
 
-config.window_frame = {
-    -- border_left_width = "0.18cell",
-    -- border_right_width = "0.18cell",
-    -- border_bottom_height = "0.08cell",
-    -- border_top_height = "0.08cell",
-    -- border_left_color = "pink",
-    -- border_right_color = "pink",
-    -- border_bottom_color = "pink",
-    -- border_top_color = "pink",
+-- ────────────────────────────────────────────────────────────────────────────
+-- Bảng màu amber CRT — 16 màu ANSI ánh xạ về dải ấm nhưng vẫn phân biệt được.
+-- Khớp với ~/.tmux.conf và alacritty.toml
+-- ────────────────────────────────────────────────────────────────────────────
+config.colors = {
+    foreground = "#e8c89a",
+    background = "#2b2433",
+
+    cursor_bg = "#ffb000",
+    cursor_fg = "#2b2433",
+    cursor_border = "#ffb000",
+
+    selection_fg = "#2b2433",
+    selection_bg = "#cc8800",
+
+    scrollbar_thumb = "#5a4f66",
+    split = "#3a3145",
+
+    ansi = {
+        "#3a3145", -- black
+        "#c05a10", -- red
+        "#a08a3c", -- green
+        "#cc8800", -- yellow
+        "#8a6f9c", -- blue
+        "#b06a7a", -- magenta
+        "#9c8a6a", -- cyan
+        "#e8c89a", -- white
+    },
+    brights = {
+        "#5a4f66",
+        "#e07b4a",
+        "#c4a85a",
+        "#ffb000",
+        "#ab8dbf",
+        "#d99a9a",
+        "#c4b090",
+        "#ffe0b0",
+    },
 }
 
--- keys
+-- Thêm hỗ trợ IME cho tiếng Việt (ibus-bamboo)
+config.use_ime = true  -- Bật IME để nhập tiếng Việt
+config.xim_im_name = 'ibus'  -- Dùng cho X11, nếu Wayland thì thử comment dòng này
+
+-- Nếu dùng Wayland và vẫn lỗi IME, thử thêm:
+-- config.enable_wayland = false
+
+-- 4. Xử lý Phím tắt
 config.keys = {
+    -- Đổi hình nền ngẫu nhiên (CTRL + SHIFT + B)
     {
-        key = "b",
+        key = "B",
         mods = "CTRL|SHIFT",
-        action = wezterm.action_callback(function(window)
-            bg_image = pick_random_background(background_folder)
-            if bg_image then
+        action = wezterm.action_callback(function(window, pane)
+            local new_bg = pick_random_background(background_folder)
+            if new_bg then
+                current_bg = new_bg
                 window:set_config_overrides({
-                    window_background_image = bg_image,
+                    window_background_image = current_bg,
+                    window_background_image_hsb = { brightness = brightness, hue = 1.0, saturation = 0.8 }
                 })
-                wezterm.log_info("New bg:" .. bg_image)
-            else
-                wezterm.log_error("Could not find bg image")
+                wezterm.log_info("Đã đổi ảnh: " .. current_bg)
             end
         end),
     },
-    {
-        key = "L",
-        mods = "CTRL|SHIFT",
-        action = wezterm.action.OpenLinkAtMouseCursor,
-    },
+    -- Tăng độ sáng (CTRL + SHIFT + >)
     {
         key = ">",
         mods = "CTRL|SHIFT",
-        action = wezterm.action_callback(function(window)
+        action = wezterm.action_callback(function(window, pane)
             brightness = math.min(brightness + 0.01, 1.0)
             window:set_config_overrides({
-                window_background_image_hsb = {
-                    brightness = brightness,
-                    hue = 1.0,
-                    saturation = 0.8,
-                },
-                window_background_image = bg_image,
+                window_background_image = current_bg,
+                window_background_image_hsb = { brightness = brightness, hue = 1.0, saturation = 0.8 }
             })
         end),
     },
+    -- Giảm độ sáng (CTRL + SHIFT + <)
     {
         key = "<",
         mods = "CTRL|SHIFT",
-        action = wezterm.action_callback(function(window)
+        action = wezterm.action_callback(function(window, pane)
             brightness = math.max(brightness - 0.01, 0.01)
             window:set_config_overrides({
-                window_background_image_hsb = {
-                    brightness = brightness,
-                    hue = 1.0,
-                    saturation = 0.8,
-                },
-                window_background_image = bg_image,
+                window_background_image = current_bg,
+                window_background_image_hsb = { brightness = brightness, hue = 1.0, saturation = 0.8 }
             })
         end),
     },
 }
 
--- others
-config.default_cursor_style = "BlinkingUnderline"
-config.cursor_thickness = 2
-config.max_fps = 120
 return config
