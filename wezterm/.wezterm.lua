@@ -66,25 +66,26 @@ config.window_frame = {
 }
 
 -- ────────────────────────────────────────────────────────────────────────────
--- Bảng màu amber CRT — 16 màu ANSI ánh xạ về dải ấm nhưng vẫn phân biệt được.
--- Khớp với ~/.tmux.conf, alacritty.toml và nvim colors/amber-crt.lua
+-- Chữ amber CRT trên nền xám tối trung tính — 16 màu ANSI ánh xạ về dải ấm
+-- nhưng vẫn phân biệt được. Nền/bề mặt (#222226…) khớp nền gnome-terminal
+-- (GTK theme), ~/.tmux.conf, alacritty.toml và nvim colors/amber-crt.lua
 -- ────────────────────────────────────────────────────────────────────────────
 config.colors = {
     foreground = "#e8c89a",
-    background = "#352b2d",
+    background = "#222226",
 
     cursor_bg = "#ffb000",
-    cursor_fg = "#352b2d",
+    cursor_fg = "#222226",
     cursor_border = "#ffb000",
 
-    selection_fg = "#352b2d",
+    selection_fg = "#222226",
     selection_bg = "#cc8800",
 
-    scrollbar_thumb = "#665356",
-    split = "#46393c",
+    scrollbar_thumb = "#4a4a54",
+    split = "#2d2d34",
 
     ansi = {
-        "#46393c", -- black
+        "#2d2d34", -- black
         "#c05a10", -- red
         "#a08a3c", -- green
         "#cc8800", -- yellow
@@ -94,7 +95,7 @@ config.colors = {
         "#e8c89a", -- white
     },
     brights = {
-        "#665356",
+        "#4a4a54",
         "#e07b4a",
         "#c4a85a",
         "#ffb000",

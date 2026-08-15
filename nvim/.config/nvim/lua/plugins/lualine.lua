@@ -19,9 +19,9 @@ return {
         end
         -- Bảng màu amber-crt, khớp colors/amber-crt.lua, .tmux.conf và terminal
         local c = {
-            bg = "#352b2d",
-            bg_alt = "#46393c",
-            sel = "#665356",
+            bg = "#222226",
+            bg_alt = "#2d2d34",
+            sel = "#4a4a54",
             dim = "#8a7a6a",
             fg = "#e8c89a",
             amber = "#ffb000",

@@ -1,8 +1,9 @@
--- amber-crt — bảng màu hổ phách trên nền nâu xám.
--- Dùng đúng 16 màu đã đặt cho alacritty.toml, .wezterm.lua và .tmux.conf,
+-- amber-crt — chữ hổ phách trên nền xám tối trung tính.
+-- Các màu nền/bề mặt (bg, bg_alt, sel) lấy theo nền gnome-terminal đang dùng
+-- (use-theme-colors, GTK vẽ #222226) và khớp với .tmux.conf + lualine.lua,
 -- nên nvim, terminal và tmux nhìn như một hệ thống duy nhất.
 --
--- Đổi màu ở bảng `c` bên dưới là đổi toàn bộ nvim; nhớ đổi khớp ở ba file kia.
+-- Đổi màu ở bảng `c` bên dưới là đổi toàn bộ nvim; nhớ đổi khớp ở hai file kia.
 
 vim.cmd("highlight clear")
 if vim.fn.exists("syntax_on") == 1 then
@@ -12,9 +13,9 @@ vim.o.termguicolors = true
 vim.g.colors_name = "amber-crt"
 
 local c = {
-	bg = "#352b2d", -- nền
-	bg_alt = "#46393c", -- nổi: dòng hiện tại, popup, statusline
-	sel = "#665356", -- vùng chọn, viền
+	bg = "#222226", -- nền (= nền gnome-terminal)
+	bg_alt = "#2d2d34", -- nổi: dòng hiện tại, popup, statusline
+	sel = "#4a4a54", -- vùng chọn, viền
 	dim = "#8a7a6a", -- ghi chú, toán tử, dấu câu
 	fg_dim = "#ab9370", -- chữ phụ
 	fg = "#e8c89a", -- chữ chính, biến
@@ -243,11 +244,11 @@ hl("DiagnosticVirtualTextInfo", { fg = c.sand, bg = c.bg_alt })
 hl("DiagnosticVirtualTextHint", { fg = c.dim, bg = c.bg_alt })
 
 -- ── diff & git ──────────────────────────────────────────────────────────────
--- nền diff = nền nâu xám trộn với màu tương ứng, đủ nổi mà không chói
-hl("DiffAdd", { fg = c.olive_l, bg = "#4a3e30" })
-hl("DiffChange", { fg = c.amber_d, bg = "#533e24" })
-hl("DiffDelete", { fg = c.rust, bg = "#513427" })
-hl("DiffText", { fg = c.amber, bg = "#6c4f21", bold = true })
+-- nền diff = nền xám tối trộn với màu tương ứng, đủ nổi mà không chói
+hl("DiffAdd", { fg = c.olive_l, bg = "#3b372a" })
+hl("DiffChange", { fg = c.amber_d, bg = "#44361e" })
+hl("DiffDelete", { fg = c.rust, bg = "#422d22" })
+hl("DiffText", { fg = c.amber, bg = "#644d1b", bold = true })
 hl("Added", { fg = c.olive })
 hl("Changed", { fg = c.amber_d })
 hl("Removed", { fg = c.rust })
