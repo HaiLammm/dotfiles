@@ -1,3 +1,5 @@
+-- File: ~/.config/nvim/init.lua
+
 -- pull lazy vim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -17,12 +19,15 @@ require("vim-options")
 require("vim-helpers")
 require("help-floating")
 require("floating-term")
--- require("lazy").setup("plugins")
+require("todo-sync")
+
+-- setup lazy.nvim
 local uname = vim.loop.os_uname()
 local hostname = vim.loop.os_gethostname()
-lazy_opts = {}
+local lazy_opts = {}
 if not (uname.sysname == "Darwin" and hostname == "kunkka07xx") then
     lazy_opts.lockfile = "~/nix/dotfiles/nvim/lazy-lock.json"
 end
+
+
 require("lazy").setup("plugins", lazy_opts)
-require("snipets")
