@@ -27,7 +27,8 @@ local config = {
         '-jar',
         vim.fn.glob(home .. '/.local/share/nvim/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_*.jar'),
         '-configuration',
-        home .. '/.local/share/nvim/mason/packages/jdtls/config_mac',
+        home .. '/.local/share/nvim/mason/packages/jdtls/'
+        .. (vim.loop.os_uname().sysname == 'Darwin' and 'config_mac' or 'config_linux'),
         '-data',
         workspace_dir,
     },

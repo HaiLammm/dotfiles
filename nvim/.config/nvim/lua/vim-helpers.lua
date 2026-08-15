@@ -36,12 +36,12 @@ vim.keymap.set("n", "<leader>ob", function()
 				cmd = "open -a 'Firefox' " .. file_path
 			end
 		else
-            local firefox_path = vim.fn.system("which firefox"):gsub("\n", "")
-            local has_firefox = firefox_path ~= ""
-            if has_firefox then
-                cmd = "google-chrome " .. file_path
-            end
-			cmd = "firefox " .. file_path
+			local firefox_path = vim.fn.system("which firefox"):gsub("\n", "")
+			if firefox_path ~= "" then
+				cmd = "firefox " .. file_path
+			else
+				cmd = "google-chrome " .. file_path
+			end
 		end
 		os.execute(cmd .. " &")
 	else
