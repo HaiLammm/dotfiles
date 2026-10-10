@@ -1,153 +1,147 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+# PATH
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+[ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Path to your Oh My Zsh installation.
+# Input method — ibus trên Mint; máy Arch (X1) dùng fcitx5, khai báo ở /etc/environment
+if command -v ibus-daemon >/dev/null; then
+  export GTK_IM_MODULE=ibus
+  export QT_IM_MODULE=ibus
+  export XMODIFIERS=@im=ibus
+fi
+export OLLAMA_KEEP_ALIVE=-1
+
+# ==============================================================
+# Oh My Zsh
+# ZSH_THEME rỗng: prompt được tự định nghĩa bên dưới
+# ==============================================================
 export ZSH="$HOME/.oh-my-zsh"
-# Ưu tiên Homebrew
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""
+plugins=(git)
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(
-  git
-  zsh-autosuggestions  # Gợi ý lệnh dựa trên lịch sử
-  zsh-syntax-highlighting  # Tô màu cú pháp lệnh
-  python  # Hỗ trợ lệnh Python
-  npm  # Hỗ trợ lệnh npm/yarn cho Next.js
-  docker  # Nếu bạn sử dụng Docker cho backend
-    )
+# Nạp module complist TRƯỚC compinit (oh-my-zsh gọi compinit bên trong)
+zmodload zsh/complist
+autoload -U colors && colors
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# ==============================================================
+# Completion — phần chính của video (đặt SAU oh-my-zsh để ghi đè)
+# ==============================================================
+zstyle ':completion:*' menu select                              # Tab mở menu chọn
+zstyle ':completion:*' special-dirs true                        # hiện . và .. trong menu
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} ma=0\;33  # tô màu menu
+zstyle ':completion:*' squeeze-slashes false                    # cho phép expand /*/
 
-# export MANPATH="/usr/local/man:$MANPATH"
+# Di chuyển trong menu bằng hjkl (chế độ menuselect)
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+# ==============================================================
+# Options
+# ==============================================================
+setopt append_history inc_append_history share_history  # history dùng chung mọi session
+setopt auto_menu menu_complete                          # tự chọn match đầu tiên
+setopt autocd                                           # gõ tên thư mục để cd
+setopt auto_param_slash                                 # thêm / sau khi complete thư mục
+setopt no_case_glob no_case_match                       # completion không phân biệt hoa/thường
+setopt globdots                                         # bao gồm file ẩn
+setopt extended_glob                                    # hỗ trợ ~ # ^
+setopt interactive_comments                             # cho phép comment trong shell
+unsetopt prompt_sp                                      # không tự xoá dòng trống
+stty stop undef                                         # vô hiệu hoá Ctrl-S
+stty -ixon
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE
 
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
+# ==============================================================
+# fzf
+# ==============================================================
+source <(fzf --zsh)
 
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+# ==============================================================
+# Keybindings
+# ==============================================================
+bindkey "^a" beginning-of-line
+bindkey "^e" end-of-line
+bindkey "^k" kill-line
+bindkey "^j" backward-word
+bindkey "^H" backward-kill-word
+bindkey "^J" history-search-forward
+bindkey "^K" history-search-backward
+bindkey '^R' fzf-history-widget
 
-# Alias
-alias tm="tmux"
-alias ssh="ssh -p 1122 root@127.0.0.1"
-alias qute="cd ~/qutebrowser
-.venv/bin/python3 -m qutebrowser"
-alias bi="brew install"
-alias tm-note="nvim dotfiles/tmux/cv-note.sh"
-alias zshrc="nvim ~/dotfiles/zsh/.zshrc"
-alias tm="tmux"
-alias nextdev="npm run dev"
-alias nextbuild="npm run build"
-alias nextstart="npm run start"
-alias nextlint="npm run lint"
-alias py="python3"
-alias pip="pip3"
-alias venv="python3 -m venv .venv"
-alias activate="source .venv/bin/activate"
-alias brewup="brew update && brew upgrade"
-alias pdev="pnpm dev"  # Chạy Next.js dev server
-alias pbuild="pnpm build"  # Build Next.js
-alias pstart="pnpm start"  # Start Next.js production
-alias plint="pnpm lint"  # Chạy lint
-alias padd="pnpm add"  # Cài package
-alias prm="pnpm remove"  # Xóa package
-alias pi="pnpm install"  # Cài tất cả dependencies
-alias gcl="git clone"
-alias gadd="git add ."
-alias gpo="git push -u origin"
-alias gpom="git pull origin "
-alias gcm="git commit -m"
-alias record="cd /home/luonghailam/Music/ 
-./Record.sh"
-alias note="cd /home/luonghailam/Documents/
-./note.sh"
+# ==============================================================
+# Aliases
+# ==============================================================
+alias zshrc="nvim ~/.zshrc"
+alias note="nvim ~/Projects/note/"
+# alias wezterm='flatpak run org.wezfurlong.wezterm'  # tắt: đã cài wezterm-nightly native (/usr/bin/wezterm) sửa lỗi IME tiếng Việt
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# Plugin bổ sung
-# Auto-update Oh My Zsh
-zstyle ':omz:update' mode auto
-zstyle ':omz:update' frequency 7
+# ==============================================================
+# Conda
+# ==============================================================
+__conda_setup="$('/home/luonghailam/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/luonghailam/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/luonghailam/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/luonghailam/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+# ==============================================================
+# Prompt — Nord theme (đặt sau conda để không bị chèn "(base) ")
+# ==============================================================
+NEWLINE=$'\n'
+PROMPT="${NEWLINE}%K{#2E3440}%F{#E5E9F0}%D{%_I:%M%P} %K{#3b4252}%F{#ECEFF4} %n %K{#4c566a} %~ %f%k ❯ "
+
+# Dòng chào khi mở terminal
+echo -e "${NEWLINE}\x1b[38;5;137m\x1b[48;5;0m it's$(print -P '%D{%_I:%M%P}\n') \x1b[38;5;180m\x1b[48;5;0m $(uptime -p | cut -c 4-) \x1b[38;5;223m\x1b[48;5;0m $(uname -r) \033[0m"
+
+# ==============================================================
+# Tools
+# ==============================================================
+export PATH="$PATH:$HOME/development/flutter/bin"
+export PATH="/home/luonghailam/.opencode/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Khoá API — giữ trong file riêng, không commit
+[ -f ~/.zsh_secrets ] && source ~/.zsh_secrets
+
+# Claude Code — ghim UUID vào dòng lệnh để tmux-resurrect khôi phục đúng phiên.
+# Không có UUID trong `ps`, resurrect chỉ lưu được `claude` trần và restore ra
+# hội thoại trắng. Xem luật `@resurrect-processes` trong ~/.tmux.conf.
+claude() {
+  case "$1" in
+    -r|--resume|-c|--continue) command claude "$@" ;;
+    *) command claude --session-id "$(uuidgen)" "$@" ;;
+  esac
+}
+
+# ssh-agent của systemd user (Arch: ssh-agent.socket). environment.d không tới được
+# terminal/tmux nên phải export ở đây; Mint không có socket này nên bỏ qua.
+if [ -z "$SSH_AUTH_SOCK" ] && [ -S "$XDG_RUNTIME_DIR/ssh-agent.socket" ]; then
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+fi
+
+# ==============================================================
+# Plugins — syntax-highlighting phải nằm CUỐI CÙNG
+# ==============================================================
+# linuxbrew trên Mint, /usr/share/zsh/plugins trên Arch
+for p in zsh-autosuggestions zsh-syntax-highlighting; do
+  for d in /home/linuxbrew/.linuxbrew/share /usr/share/zsh/plugins; do
+    [ -f $d/$p/$p.zsh ] && { source $d/$p/$p.zsh; break; }
+  done
+done
